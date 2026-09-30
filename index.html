@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TOP FX – WebGL image &amp; video effects</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ Top bar ============ -->
+<header id="topbar">
+  <div class="brand">TOP<span>FX</span></div>
+
+  <button id="btnUpload" class="btn primary" title="Choose an image or video">Upload</button>
+  <input id="fileInput" type="file" accept="image/*,video/*" hidden>
+
+  <button id="btnExport" class="btn" disabled>Export</button>
+  <button id="btnReset" class="btn ghost" title="Remove all effects">Reset</button>
+  <button id="btnCompare" class="btn" disabled title="Hold to see the original (or hold the \ key)">Before / After</button>
+
+  <div class="spacer"></div>
+  <span id="srcInfo" class="muted"></span>
+</header>
+
+<main>
+  <!-- ============ Preview ============ -->
+  <section id="stage">
+    <div id="viewport">
+      <canvas id="glcanvas" width="16" height="9"></canvas>
+      <div id="dropHint">
+        <div class="drop-title">Drop an image or video anywhere</div>
+        <div class="muted">or <button id="btnUpload2" class="link">choose a file</button></div>
+      </div>
+    </div>
+
+    <!-- video transport: only visible for video sources -->
+    <div id="videobar" hidden>
+      <button id="btnPlay" class="btn icon" title="Play / pause (Space)">❚❚</button>
+      <input id="scrub" type="range" min="0" max="1000" value="0" step="1">
+      <span id="timeLbl" class="muted mono">0:00 / 0:00</span>
+      <button id="btnMute" class="btn icon" title="Mute / unmute preview audio">🔇</button>
+    </div>
+
+    <!-- video export progress -->
+    <div id="exportProgress" hidden>
+      <span id="exportLabel">Recording…</span>
+      <div class="bar"><div id="exportFill"></div></div>
+      <button id="btnCancelExport" class="btn small">Cancel</button>
+    </div>
+  </section>
+
+  <!-- ============ Effect stack ============ -->
+  <aside id="sidebar">
+    <div class="side-head">
+      <select id="addEffect" aria-label="Add effect"></select>
+      <div class="row">
+        <select id="presetSelect" aria-label="Built-in presets"></select>
+      </div>
+      <div class="row">
+        <button id="btnSave" class="btn small">Save preset</button>
+        <button id="btnLoad" class="btn small">Load preset</button>
+        <input id="presetInput" type="file" accept=".json,application/json" hidden>
+      </div>
+    </div>
+    <div id="stack"></div>
+    <div id="emptyStack" class="muted">
+      No effects yet. Use <b>+ Add effect</b> above, or load a preset.<br>
+      Effects run top to bottom.
+    </div>
+  </aside>
+</main>
+
+<div id="dropOverlay" hidden>Drop to load</div>
+<div id="toasts" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
