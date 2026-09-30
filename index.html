@@ -3,34 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TOP FX – WebGL image &amp; video effects</title>
+  <title>TOP FX – node-based image &amp; video effects</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- ============ Top bar ============ -->
 <header id="topbar">
-  <div class="brand">TOP<span>FX</span></div>
+  <div class="brand"><span class="logo"></span>TOP<span>FX</span></div>
 
   <button id="btnUpload" class="btn primary" title="Choose an image or video">Upload</button>
   <input id="fileInput" type="file" accept="image/*,video/*" hidden>
-
   <button id="btnExport" class="btn" disabled>Export</button>
-  <button id="btnReset" class="btn ghost" title="Remove all effects">Reset</button>
+  <span class="sep"></span>
   <button id="btnCompare" class="btn" disabled title="Hold to see the original (or hold the \ key)">Before / After</button>
+  <button id="btnReset" class="btn ghost" title="Start a fresh node graph">Reset</button>
 
   <div class="spacer"></div>
   <span id="srcInfo" class="muted"></span>
 </header>
 
 <main>
-  <!-- ============ Preview ============ -->
   <section id="stage">
+    <!-- ============ Preview ============ -->
     <div id="viewport">
       <canvas id="glcanvas" width="16" height="9"></canvas>
       <div id="dropHint">
         <div class="drop-title">Drop an image or video anywhere</div>
         <div class="muted">or <button id="btnUpload2" class="link">choose a file</button></div>
+      </div>
+      <div id="viewChip" hidden>
+        <span id="viewChipLbl"></span>
+        <button id="viewChipClear" title="Back to the Output">✕</button>
       </div>
     </div>
 
@@ -48,28 +52,46 @@
       <div class="bar"><div id="exportFill"></div></div>
       <button id="btnCancelExport" class="btn small">Cancel</button>
     </div>
+
+    <div id="splitter" role="separator" aria-orientation="horizontal" title="Drag to resize"><span></span></div>
+
+    <!-- ============ Node editor ============ -->
+    <section id="graphPanel">
+      <div id="graphBar">
+        <button id="btnAddNode" class="btn primary small" title="Add a node (A)">＋ Add node</button>
+        <button id="btnFit" class="btn small" title="Frame all nodes (F)">Fit</button>
+        <button id="btnArrange" class="btn small" title="Tidy the layout left to right">Auto-arrange</button>
+        <div class="spacer"></div>
+        <select id="presetSelect" aria-label="Example graphs"></select>
+        <button id="btnSave" class="btn small">Save</button>
+        <button id="btnLoad" class="btn small">Load</button>
+        <input id="presetInput" type="file" accept=".json,application/json" hidden>
+        <span id="zoomLbl" class="muted mono">100%</span>
+      </div>
+      <div id="graph">
+        <div id="world">
+          <svg id="wires" width="1" height="1"><path id="tempWire" d=""/></svg>
+          <div id="nodes"></div>
+        </div>
+        <div id="graphEmpty" class="graph-ui" hidden>Empty graph — press <kbd>A</kbd> or double-click to add a node</div>
+        <div id="graphHint" class="graph-ui">
+          Drag output → input to connect · double-click a wire to remove · scroll to zoom · drag canvas to pan
+        </div>
+      </div>
+    </section>
   </section>
 
-  <!-- ============ Effect stack ============ -->
-  <aside id="sidebar">
-    <div class="side-head">
-      <select id="addEffect" aria-label="Add effect"></select>
-      <div class="row">
-        <select id="presetSelect" aria-label="Built-in presets"></select>
-      </div>
-      <div class="row">
-        <button id="btnSave" class="btn small">Save preset</button>
-        <button id="btnLoad" class="btn small">Load preset</button>
-        <input id="presetInput" type="file" accept=".json,application/json" hidden>
-      </div>
-    </div>
-    <div id="stack"></div>
-    <div id="emptyStack" class="muted">
-      No effects yet. Use <b>+ Add effect</b> above, or load a preset.<br>
-      Effects run top to bottom.
-    </div>
+  <!-- ============ Inspector ============ -->
+  <aside id="inspector">
+    <div id="inspBody"></div>
   </aside>
 </main>
+
+<!-- add-node popup -->
+<div id="addMenu" hidden>
+  <input id="menuSearch" type="text" placeholder="Search nodes…" autocomplete="off" spellcheck="false">
+  <div id="menuList"></div>
+</div>
 
 <div id="dropOverlay" hidden>Drop to load</div>
 <div id="toasts" aria-live="polite"></div>
